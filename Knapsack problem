@@ -1,0 +1,171 @@
+[24bcs116@mepcolinux ex10]$cat knap.java
+import java.util.*;
+
+class Item {
+    float weight;
+    int value;
+    int id;
+
+    Item(int id, int value, float weight) {
+        this.id = id;
+        this.value = value;
+        this.weight = weight;
+    }
+}
+
+class Node implements Comparable<Node> {
+    int level;
+    int profit;
+    float weight;
+    float bound;
+    List<Item> selectedItems;
+
+    public Node(int level, int profit, float weight) {
+        this.level = level;
+        this.profit = profit;
+        this.weight = weight;
+        this.selectedItems = new ArrayList<>();
+    }
+    public Node(Node parent) {
+        this.level = parent.level;
+        this.profit = parent.profit;
+        this.weight = parent.weight;
+        this.bound = parent.bound;
+        this.selectedItems = new ArrayList<>(parent.selectedItems);
+    }
+
+    @Override
+    public int compareTo(Node other) {
+        return Float.compare(other.bound, this.bound);
+    }
+}
+
+public class knap {
+
+    static float getBound(Node u, int n, int W, Item[] items) {
+        if (u.weight >= W) return 0;
+        float profitBound = u.profit;
+        int j = u.level + 1;
+        float totalWeight = u.weight;
+
+        while (j < n && totalWeight + items[j].weight <= W) {
+            totalWeight += items[j].weight;
+            profitBound += items[j].value;
+            j++;
+        }
+        if (j < n) {
+            profitBound += (W - totalWeight) * (float) items[j].value / items[j].weight;
+        }
+        return profitBound;
+    }
+
+    public static void solveKnapsack(int W, Item[] items, int n) {
+        Arrays.sort(items, (a, b) -> Double.compare((double) b.value / b.weight, (double) a.value / a.weight));
+
+        PriorityQueue<Node> pq = new PriorityQueue<>();
+        Node root = new Node(-1, 0, 0);
+        root.bound = getBound(root, n, W, items);
+        pq.add(root);
+
+        int maxProfit = 0;
+        List<Item> bestItemsSet = new ArrayList<>();
+
+        while (!pq.isEmpty()) {
+            Node u = pq.poll();
+            if (u.bound <= maxProfit) continue;
+
+            int nextLevel = u.level + 1;
+            if (nextLevel >= n) continue;
+
+            Item currentItem = items[nextLevel];
+
+            Node include = new Node(u);
+            include.level = nextLevel;
+            include.weight += currentItem.weight;
+            include.profit += currentItem.value;
+            include.selectedItems.add(currentItem);
+
+            if (include.weight <= W) {
+                if (include.profit > maxProfit) {
+                    maxProfit = include.profit;
+                    bestItemsSet = new ArrayList<>(include.selectedItems);
+                }
+                include.bound = getBound(include, n, W, items);
+                if (include.bound > maxProfit) pq.add(include);
+            }
+
+            Node exclude = new Node(u);
+            exclude.level = nextLevel;
+            exclude.bound = getBound(exclude, n, W, items);
+            if (exclude.bound > maxProfit) pq.add(exclude);
+        }
+
+        System.out.println("\n========================================");
+        System.out.println("FINAL SOLUTION");
+        System.out.println("========================================");
+        System.out.println("Maximum Profit: " + maxProfit);
+        System.out.println("\nItems Selected:");
+        System.out.printf("%-10s %-10s %-10s\n", "Item ID", "Value", "Weight");
+        System.out.println("----------------------------------------");
+
+        float totalWeight = 0;
+        for (Item item : bestItemsSet) {
+            System.out.printf("%-10d %-10d %-10.2f\n", item.id, item.value, item.weight);
+            totalWeight += item.weight;
+        }
+        System.out.println("----------------------------------------");
+        System.out.printf("Total Weight: %.2f / %d\n", totalWeight, W);
+        System.out.println("========================================");
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter knapsack capacity: ");
+        int W = sc.nextInt();
+        System.out.print("Enter number of items: ");
+        int n = sc.nextInt();
+
+        Item[] items = new Item[n];
+        for (int i = 0; i < n; i++) {
+            System.out.println("\nItem " + (i + 1) + ":");
+            System.out.print("  Value: ");
+            int val = sc.nextInt();
+            System.out.print("  Weight: ");
+            float wt = sc.nextFloat();
+            items[i] = new Item(i + 1, val, wt);
+        }
+
+        solveKnapsack(W, items, n);
+        sc.close();
+    }
+}
+[24bcs116@mepcolinux ex10]$javac knap.java
+[24bcs116@mepcolinux ex10]$java knap
+Enter knapsack capacity: 10
+Enter number of items: 3
+
+Item 1:
+  Value: 40
+  Weight: 2
+
+Item 2:
+  Value: 100
+  Weight: 5
+
+Item 3:
+  Value: 50
+  Weight: 10
+
+========================================
+FINAL SOLUTION
+========================================
+Maximum Profit: 140
+
+Items Selected:
+Item ID    Value      Weight
+----------------------------------------
+1          40         2.00
+2          100        5.00
+----------------------------------------
+Total Weight: 7.00 / 10
+========================================
