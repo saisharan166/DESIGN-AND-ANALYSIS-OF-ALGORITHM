@@ -1,0 +1,139 @@
+[24bcs116@mepcolinux ex5]$cat Horspool.java
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class Horspool {
+
+    private static int[] preprocess(String pattern) {
+        int m = pattern.length();
+        int[] shiftTable = new int[256];
+        Arrays.fill(shiftTable, m);
+        for (int j = 0; j < m - 1; j++) {
+            shiftTable[pattern.charAt(j)] = m - 1 - j;
+        }
+        return shiftTable;
+    }
+
+    public static void searchWithStats(String text, String pattern) {
+        int n = text.length();
+        int m = pattern.length();
+        int alignments = 0;
+        int comparisons = 0;
+        int index = -1;
+
+        if (m <= n && m > 0) {
+            int[] shiftTable = preprocess(pattern);
+            int i = m - 1;
+
+            while (i < n) {
+                alignments++;
+                int k = 0;
+
+                while (k < m) {
+                    comparisons++;
+                    if (pattern.charAt(m - 1 - k) == text.charAt(i - k)) {
+                        k++;
+                    } else {
+                        break;
+                    }
+                }
+
+                if (k == m) {
+                    index = i - m + 1;
+                    break;
+                }
+
+                i += shiftTable[text.charAt(i)];
+            }
+        }
+        if (index != -1) {
+            System.out.println("Pattern found at index: " + index);
+        } else {
+            System.out.println("Pattern not found.");
+        }
+        System.out.println("Total Alignments: " + alignments);
+        System.out.println("Total Comparisons: " + comparisons);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter text: ");
+        String text = scanner.nextLine();
+
+        System.out.print("Enter pattern: ");
+        String pattern = scanner.nextLine();
+
+        searchWithStats(text, pattern);
+
+        scanner.close();
+    }
+}
+[24bcs116@mepcolinux ex5]$java Horspool
+Enter text: luffy gear five name is joyboy
+Enter pattern: joy
+Pattern found at index: 24
+Total Alignments: 9
+Total Comparisons: 11
+
+
+[24bcs116@mepcolinux ex5]$cat CompareSortPgm.java
+import java.util.*;
+class CompareSortPgm {
+   public int[] countSort(int[] arr,int size){
+      int n=size;
+      int[] count=new int[n];
+      int[] s=new int[n];
+      for(int i=0;i<n;i++){
+         count[i]=0;
+         s[i]=0;
+      }
+      for(int i=0;i<n-1;i++){
+         for(int j=i+1;j<n;j++){
+            if(arr[i]>arr[j]){
+               count[i]=count[i]+1;
+            }
+            else{
+               count[j]=count[j]+1;
+            }
+         }
+         for(int a:count){
+            System.out.print(a+" ");
+         }
+         System.out.println();
+      }
+      for(int i=0;i<n;i++){
+         s[count[i]]=arr[i];
+      }
+      return s;
+   }
+   public static void main(String[] args){
+      Scanner sc=new Scanner(System.in);
+      CompareSortPgm cs=new CompareSortPgm();
+      System.out.println("Enter the no. of Elements:");
+      int size=sc.nextInt();
+      int[] arr=new int[size];
+      for(int i=0;i<size;i++){
+         System.out.print("Enter the Element "+(i+1)+":");
+         arr[i]=sc.nextInt();
+      }
+      int[] res=cs.countSort(arr,size);
+      for(int a:res){
+         System.out.print(a+" ");
+      }
+   }
+}
+
+[24bcs116@mepcolinux ex5]$java CompareSortPgm
+Enter the no. of Elements:
+5
+Enter the Element 1:6
+Enter the Element 2:7
+Enter the Element 3:9
+Enter the Element 4:2
+Enter the Element 5:4
+2 1 1 0 0
+2 3 2 0 0
+2 3 4 0 0
+2 3 4 0 1
+2 4 6 7 9
