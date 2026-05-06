@@ -1,0 +1,111 @@
+[24bcs116@mepcolinux ex4]$cat Minheap.java
+import java.util.Scanner;
+
+public class Minheap {
+
+    private static void heapify(int[] arr, int n, int i) {
+        int largest = i;
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+
+
+        if (left < n && arr[left] > arr[largest]) {
+            largest = left;
+        }
+
+        if (right < n && arr[right] > arr[largest]) {
+            largest = right;
+        }
+
+        if (largest != i) {
+            int swap = arr[i];
+            arr[i] = arr[largest];
+            arr[largest] = swap;
+            heapify(arr, n, largest);
+        }
+    }
+
+    private static void buildHeap(int[] arr, int n) {
+
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            heapify(arr, n, i);
+        }
+        System.out.println("After building heap (transform step):");
+        printArray(arr);
+    }
+
+    private static void heapSort(int[] arr) {
+        int n = arr.length;
+        buildHeap(arr, n);
+
+        for (int i = n - 1; i > 0; i--) {
+            int temp = arr[0];
+            arr[0] = arr[i];
+            arr[i] = temp;
+
+            System.out.println("After moving max element to index " + i + ":");
+            printArray(arr);
+
+            heapify(arr, i, 0);
+
+            System.out.println("After heapify on reduced heap size " + i + ":");
+            printArray(arr);
+        }
+    }
+
+    private static void printArray(int[] arr) {
+        for (int val : arr) {
+            System.out.print(val + " ");
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the number of elements (n): ");
+        if(!scanner.hasNextInt()) return;
+        int n = scanner.nextInt();
+
+        int[] arr = new int[n];
+        System.out.println("Enter " + n + " elements:");
+        for(int i = 0; i < n; i++){
+            arr[i] = scanner.nextInt();
+        }
+
+        System.out.println("Original array:");
+        printArray(arr);
+
+        heapSort(arr);
+
+        System.out.println("Sorted array:");
+        printArray(arr);
+        scanner.close();
+    }
+}
+
+
+[24bcs116@mepcolinux ex4]$java Minheap
+Enter the number of elements (n): 4
+Enter 4 elements:
+3
+8
+5
+7
+Original array:
+3 8 5 7
+After building heap (transform step):
+8 7 5 3
+After moving max element to index 3:
+3 7 5 8
+After heapify on reduced heap size 3:
+7 3 5 8
+After moving max element to index 2:
+5 3 7 8
+After heapify on reduced heap size 2:
+5 3 7 8
+After moving max element to index 1:
+3 5 7 8
+After heapify on reduced heap size 1:
+3 5 7 8
+Sorted array:
+3 5 7 8
