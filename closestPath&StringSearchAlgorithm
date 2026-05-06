@@ -1,0 +1,192 @@
+[24bcs116@mepcolinux ex2]$cat ClosestPath3.cpp
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+struct Point {
+    double x, y;
+};
+
+int main() {
+    int n;
+    cout << "Enter number of points: ";
+    cin >> n;
+
+    Point p[100];
+    for (int i = 0; i < n; i++) {
+        cout << "Point " << i + 1 << " (x y): ";
+        cin >> p[i].x >> p[i].y;
+    }
+
+    double min_dist = 9999999.0;
+    int first = 0, second = 0;
+    int comparisons = 0;
+
+    cout << "\n--Distances--" << endl;
+
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            comparisons++;
+
+
+            double d = sqrt(pow(p[j].x - p[i].x, 2) + pow(p[j].y - p[i].y, 2));
+
+
+            cout << "Distance between Point " << i + 1 << " and Point " << j + 1 << "    = " << d << endl;
+
+
+            if (d < min_dist) {
+                min_dist = d;
+                first = i;
+                second = j;
+            }
+        }
+    }
+
+
+    cout << "\n-----------------------------" << endl;
+    if (n < 2) {
+        cout << "Not enough points to find a pair." << endl;
+    } else {
+        cout << "MINIMUM DISTANCE FOUND" << endl;
+        cout << "Closest: Point " << first + 1 << " and " << second + 1 << endl;
+        cout << "Distance: " << min_dist << endl;
+        cout << "Total Comparisons: " << comparisons << endl;
+    }
+
+    return 0;
+}
+[24bcs116@mepcolinux ex2]$c++ ClosestPath3.cpp
+[24bcs116@mepcolinux ex2]$./a.out
+Enter number of points: 4
+Point 1 (x y): 2 3
+Point 2 (x y): 12 30
+Point 3 (x y): 40 50
+Point 4 (x y): 5 4
+
+--Distances--
+Distance between Point 1 and Point 2    = 28.7924
+Distance between Point 1 and Point 3    = 60.4401
+Distance between Point 1 and Point 4    = 3.16228
+Distance between Point 2 and Point 3    = 34.4093
+Distance between Point 2 and Point 4    = 26.9258
+Distance between Point 3 and Point 4    = 57.8014
+
+-----------------------------
+MINIMUM DISTANCE FOUND
+Closest: Point 1 and 4
+Distance: 3.16228
+Total Comparisons: 6
+[24bcs116@mepcolinux ex2]$cat StringSearch2.cpp
+#include <iostream>
+#include <string>
+void searchAndStop(const std::string& text, const std::string& pattern) {
+    int n = text.length();
+    int m = pattern.length();
+    int totalAlignments = 0;
+    int totalComparisons = 0;
+    for (int i = 0; i <= n - m; i++) {
+        totalAlignments++;
+        std::cout << "Alignment :" << totalAlignments << " (Index " << i << "):\n";
+        std::cout << "Text:    " << text << "\n";
+        std::string padding(i, ' ');
+        std::cout << "Pattern: " << padding << pattern << "\n";
+        std::cout << "Match:   " << padding;
+        int j;
+        for (j = 0; j < m; j++) {
+            totalComparisons++;
+            if (text[i + j] == pattern[j]) {
+                std::cout << "+";
+            } else {
+                std::cout << "x";
+                break;
+            }
+        }
+        std::cout << "\n\n";
+        if (j == m) {
+            std::cout << "Match Found!\n";
+            std::cout << "Final Index: " << i << "\n";
+            goto statistics;
+        }
+    }
+    std::cout << "Pattern not found.\n";
+
+statistics:
+    std::cout << "_________________________\n";
+    std::cout << "No. of Alignments:  " << totalAlignments << "\n";
+    std::cout << "No. of Comparisons: " << totalComparisons << "\n";
+    std::cout << "_________________________\n";
+}
+
+int main() {
+    std::string text, pattern;
+    std::cout << "Enter Text: ";
+    std::getline(std::cin, text);
+    std::cout << "Enter Pattern: ";
+    std::getline(std::cin, pattern);
+
+    if (!text.empty() && !pattern.empty() && pattern.length() <= text.length()) {
+        searchAndStop(text, pattern);
+    } else {
+        std::cout << "Invalid input lengths.\n";
+    }
+
+    return 0;
+}
+[24bcs116@mepcolinux ex2]$c++ StringSearch.cpp
+[24bcs116@mepcolinux ex2]$./a.out
+Enter the string:
+sharan
+Enter the substring to search
+n
+s h a r a n
+n
+  n
+    n
+      n
+        n
+          n
+Alignments:6
+Comparison7
+found at index5[24bcs126@mepcolinux ex2]$c++ StringSearch2.cpp
+[24bcs116@mepcolinux ex2]$./a.out
+Enter Text: sharan
+Enter Pattern: n
+Alignment :1 (Index 0):
+Text:    sharan
+Pattern: n
+Match:   x
+
+Alignment :2 (Index 1):
+Text:    sharan
+Pattern:  n
+Match:    x
+
+Alignment :3 (Index 2):
+Text:    sharan
+Pattern:   n
+Match:     x
+
+Alignment :4 (Index 3):
+Text:    sharan
+Pattern:    n
+Match:      x
+
+Alignment :5 (Index 4):
+Text:    sharan
+Pattern:     n
+Match:       x
+
+Alignment :6 (Index 5):
+Text:    sharan
+Pattern:      n
+Match:        +
+
+Match Found!
+Final Index: 5
+_________________________
+No. of Alignments:  6
+No. of Comparisons: 6
+_________________________
