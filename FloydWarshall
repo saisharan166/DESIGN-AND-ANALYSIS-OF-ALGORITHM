@@ -1,0 +1,109 @@
+[24bcs116@mepcolinux ex6]$cat FloydWarshall.java
+import java.util.Scanner;
+
+public class FloydWarshall {
+    static final int INF = 99999;
+    static final int MAX = 10;
+    static int[][] dist = new int[MAX][MAX];
+    static int n;
+
+    static void floyd() {
+        for (int k = 0; k < n; k++) {
+            System.out.println("D(" + (k + 1) + ")");
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                        dist[i][j] = dist[i][k] + dist[k][j];
+                    }
+                    if (dist[i][j] == INF) {
+                        System.out.print("INF ");
+                    } else {
+                        System.out.print(dist[i][j] + "   ");
+                    }
+                }
+                System.out.println();
+            }
+        }
+    }
+
+    static void printMatrix() {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (dist[i][j] == INF) {
+                    System.out.print("INF ");
+                } else {
+                    System.out.print(dist[i][j] + "   ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter number of vertices: ");
+        n = sc.nextInt();
+
+        System.out.println("Enter adjacency matrix:");
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                dist[i][j] = sc.nextInt();
+            }
+        }
+
+        floyd();
+
+        System.out.println("\nShortest distance for vertex:");
+        printMatrix();
+
+        sc.close();
+    }
+}
+
+[24bcs116@mepcolinux ex6]$ javac FloydWarshall.java
+[24bcs116@mepcolinux ex6]$java FloydWarshall
+Enter number of vertices: 4
+Enter adjacency matrix:
+0
+11
+2
+3
+5
+0
+4
+6
+8
+2
+0
+3
+9
+5
+99
+0
+D(1)
+0   11   2   3
+5   0   4   6
+8   2   0   3
+9   5   11   0
+D(2)
+0   11   2   3
+5   0   4   6
+7   2   0   3
+9   5   9   0
+D(3)
+0   4   2   3
+5   0   4   6
+7   2   0   3
+9   5   9   0
+D(4)
+0   4   2   3
+5   0   4   6
+7   2   0   3
+9   5   9   0
+
+Shortest distance for vertex:
+0   4   2   3
+5   0   4   6
+7   2   0   3
+9   5   9   0
